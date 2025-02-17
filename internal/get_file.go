@@ -161,16 +161,17 @@ func FindFiles(NameFileMav, NameFileRofex, NameFileMae, NameFileByma, dir, newAd
 
 }
 
-func MoveOneFile(nameFile string) {
-	files, err := os.ReadDir("C:\\Users\\joskeiner.simosa\\Desktop\\crm\\descargas")
+func MoveOneFile(dir, nameFile string) {
+	files, err := os.ReadDir(dir)
+	route := fmt.Sprintf("%s\\procesados", dir)
 	if err != nil {
 		log.Panicf("Error al leer la carpeta C:\\Users\\joskeiner.simosa\\Desktop\\crm\\descargas")
 	}
 	for _, file := range files {
 		if file.Name() == nameFile {
 			log.Println("Se encontro el archivo a mover ")
-			o := filepath.Join("C:\\Users\\joskeiner.simosa\\Desktop\\crm\\descargas", nameFile)
-			a := filepath.Join("C:\\Users\\joskeiner.simosa\\Desktop\\crm\\descargas\\procesados", nameFile)
+			o := filepath.Join(dir, nameFile)
+			a := filepath.Join(route, nameFile)
 			result := MoveDownloadedFiles(o, a)
 
 			if !result {
@@ -178,7 +179,7 @@ func MoveOneFile(nameFile string) {
 			}
 			log.Println("El archivo de se movio con exito")
 			newName := fmt.Sprintf("%s-%s", time.Now().Local().Format("02-01-2006"), nameFile)
-			newPath := filepath.Join("C:\\Users\\joskeiner.simosa\\Desktop\\crm\\descargas\\procesados", newName)
+			newPath := filepath.Join(route, newName)
 
 			if err := os.Rename(a, newPath); err != nil {
 				log.Printf("error al renombrar el archivo %s : error %v", nameFile, err.Error())
