@@ -39,10 +39,10 @@ type Byma struct {
 	Participante string `gorm:"column:participante;type:varchar(20)"`
 	Categoria    string `gorm:"column:categoria;type:varchar(50);index"`
 	Direccion    string `gorm:"column:direccion;type:varchar(200)"`
-	Phone        string `gorm:"column:phone;type:varchar(100)"`
+	Phone        string `gorm:"column:phone;type:varchar(100);index"`
 	Fax          string `gorm:"column:fax;type:varchar(100)"`
-	Email        string `gorm:"column:email;type:varchar(500)"`
-	Web          string `gorm:"column:web;type:varchar(100)"`
+	Email        string `gorm:"column:email;type:varchar(500);index"`
+	Web          string `gorm:"column:web;type:varchar(100);index"`
 	Leyenda      string `gorm:"column:leyenda;type:text"`
 }
 
@@ -56,10 +56,10 @@ type Mae struct {
 	UpdatedAt time.Time      `gorm:"column:updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index;column:deleted_at"`
 
-	Descripcion  string `gorm:"column:descripcion;type:varchar(200);not null"`
+	Descripcion  string `gorm:"column:descripcion;type:varchar(200);not null;index"`
 	Direccion    string `gorm:"column:direccion;type:varchar(255)"`
-	Telefono     string `gorm:"column:telefono;type:varchar(50)"`
-	Email        string `gorm:"column:email;type:varchar(100)"`
+	Telefono     string `gorm:"column:telefono;type:varchar(50);index"`
+	Email        string `gorm:"column:email;type:varchar(500);index"`
 	URLEntidad   string `gorm:"column:url_entidad;type:varchar(255)"`
 	Categoria    string `gorm:"column:categoria;type:varchar(50);index"`
 	URLCNV       string `gorm:"column:url_cnv;type:varchar(255)"`
@@ -78,16 +78,16 @@ type Roffex struct {
 	UpdatedAt time.Time      `gorm:"column:updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index;column:deleted_at"`
 
-	RazonSocial           string    `gorm:"column:razon_social;type:varchar(255);not null"`
+	RazonSocial           string    `gorm:"column:razon_social;type:varchar(255);not null;index"`
 	NumeroRegistroCNV     int       `gorm:"column:numero_registro_cnv"`
 	NumeroParticipanteMtR int       `gorm:"column:numero_participante_mtr"`
 	CategoriaCNV          string    `gorm:"column:categoria_cnv;type:varchar(255)"`
 	FechaAlta             time.Time `gorm:"column:fecha_alta;type:date"`
 	Circular              int       `gorm:"column:circular"`
 	Direccion             string    `gorm:"column:direccion;type:text"`
-	Telefono              string    `gorm:"column:telefono;type:varchar(100)"`
-	Web                   string    `gorm:"column:web;type:varchar(255)"`
-	CorreoElectronico     string    `gorm:"column:correo_electronico;type:varchar(255)"`
+	Telefono              string    `gorm:"column:telefono;type:varchar(100);index"`
+	Web                   string    `gorm:"column:web;type:varchar(255);index"`
+	CorreoElectronico     string    `gorm:"column:correo_electronico;type:varchar(255);index"`
 }
 
 func (Roffex) TableName() string {
