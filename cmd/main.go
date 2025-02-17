@@ -6,7 +6,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/joskeinerG/cli-datamaster/internal/email"
+	"github.com/joskeinerG/cli-datamaster/internal"
+	"github.com/joskeinerG/cli-datamaster/internal/save"
+	"github.com/joskeinerG/cli-datamaster/pkg/db"
 	"github.com/joskeinerG/cli-datamaster/pkg/viper"
 )
 
@@ -23,7 +25,7 @@ const (
 	nameFileCafci   = "cafci.xlsx"
 	urlMav          = "https://www.mav-sa.com.ar/uploads/documentos/Nomina_Agentes_MAV.pdf"
 	NameFileMav     = "Nomina_Agentes_MAV.pdf"
-	ToUser          = "joskeiner.simosa@acqit.com.ar"
+	ToUser          = "javier.pombo@acqit.com.ar"
 )
 
 func main() {
@@ -41,17 +43,17 @@ func main() {
 
 	configEmail := cfg.EmailConfig
 
-	// log.Println(" configuracion carga ")
-	// db, err := db.NewMssql(cfg.Database)
-	// if err != nil {
+	log.Println(" configuracion carga ")
+	db, err := db.NewMssql(cfg.Database)
+	if err != nil {
 
-	// 	log.Printf(" fallo la conf de db %v", err.Error())
-	// }
-	// defer db.Close()
+		log.Printf(" fallo la conf de db %v", err.Error())
+	}
+	defer db.Close()
 
-	// err = db.Migrate()
-	// if err != nil {
-	// }
+	err = db.Migrate()
+	if err != nil {
+	}
 
 	day := strconv.Itoa(time.Now().Day())
 	month := time.Now().Month()
@@ -63,25 +65,17 @@ func main() {
 		monthS = fmt.Sprintf("0%s", monthS)
 	}
 
-	// NameFileMae := fmt.Sprintf("miembros-y-adherentes%d%s%s.xls", time.Now().Year(), monthS, day)
-	// internal.CreateFolders(dir, "procesados", "logs")
-	// internal.Download(urlByma, "#print_alycs", dir, downloadTimeout, pageLoadTimeout, downloadTimeout)
-	// internal.Download(urlMae, "button.md-button.md-accent.md-raised.csv.md-theme-default", dir, downloadTimeout, pageLoadTimeout, downloadWait)
-	// internal.Download(urlRofex, "a.icon-button", dir, downloadTimeout, pageLoadTimeout, downloadWait)
-	// //internal.DownloadMav(urlMav, dir)
+	NameFileMae := fmt.Sprintf("miembros-y-adherentes%d%s%s.xls", time.Now().Year(), monthS, day)
+	internal.CreateFolders(files.Dir, "procesados", "logs")
+	internal.Download(urlByma, "#print_alycs", files.Dir, downloadTimeout, pageLoadTimeout, downloadTimeout)
+	internal.Download(urlMae, "button.md-button.md-accent.md-raised.csv.md-theme-default", files.Dir, downloadTimeout, pageLoadTimeout, downloadWait)
+	internal.Download(urlRofex, "a.icon-button", files.Dir, downloadTimeout, pageLoadTimeout, downloadWait)
+	internal.DownloadCafci(urlCafci, files.Dir, nameFileCafci)
 
-	// internal.DownloadCafci(urlCafci, dir, nameFileCafci)
-	// internal.FindFiles(NameFileMav, NameFileRofex, NameFileMae, NameFileByma, files.DirDownload, files.Dir)
-	// save.SaveByma(*db, files.Dir, NameFileByma)
-	// save.SaveMae(*db)
-	// save.SaveRofex(*db)
-	// // save.SaveMav(db)
-	// save.SaveCafci(*db)
-	data := email.TempaleteData{
-		NombreCliente: "Joskeiner",
-		NombreALYC:    "Byma",
-		URLDetalle:    "google.com",
-		NombreEmpresa: "Acqit",
-	}
-	email.SendEmail(data, configEmail.MicrosoftUserId, ToUser, configEmail.MicrosoftTenantId, configEmail.MicrosoftClientId, configEmail.MicrosoftClientSecret)
+	internal.FindFiles(NameFileMav, NameFileRofex, NameFileMae, NameFileByma, files.DirDownload, files.Dir)
+	save.SaveByma(*db, files.Dir, NameFileByma, configEmail.MicrosoftUserId, ToUser, configEmail.MicrosoftTenantId, configEmail.MicrosoftClientId, configEmail.MicrosoftClientSecret)
+	save.SaveMae(*db, files.Dir, NameFileMae, configEmail.MicrosoftUserId, ToUser, configEmail.MicrosoftTenantId, configEmail.MicrosoftClientId, configEmail.MicrosoftClientSecret)
+	save.SaveRofex(*db, files.Dir, NameFileRofex, configEmail.MicrosoftUserId, ToUser, configEmail.MicrosoftTenantId, configEmail.MicrosoftClientId, configEmail.MicrosoftClientSecret)
+	save.SaveCafci(*db, files.Dir, nameFileCafci, configEmail.MicrosoftUserId, ToUser, configEmail.MicrosoftTenantId, configEmail.MicrosoftClientId, configEmail.MicrosoftClientSecret)
+
 }
