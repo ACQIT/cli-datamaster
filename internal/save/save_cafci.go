@@ -3,14 +3,16 @@ package save
 import (
 	"fmt"
 	"log"
+	"path/filepath"
 
 	"github.com/joskeinerG/cli-datamaster/internal"
 	"github.com/joskeinerG/cli-datamaster/pkg/db"
 	"github.com/xuri/excelize/v2"
 )
 
-func SaveCafci(sql db.Mssql) {
-	file, err := excelize.OpenFile("C:\\Users\\joskeiner.simosa\\Desktop\\crm\\descargas\\cafci.xlsx")
+func SaveCafci(sql db.Mssql, dir, fileName, userId, toUser, tenantId, clienteId, clientScret string) {
+	path := filepath.Join(dir, fileName)
+	file, err := excelize.OpenFile(path)
 	if err != nil {
 		log.Fatal("Error al abrir el archivo Excel:", err)
 	}
@@ -38,12 +40,11 @@ func SaveCafci(sql db.Mssql) {
 				CodigoDeSocGte:  codSocG,
 				SociedadGerente: socGerente,
 			}
-			log.Println(fondo)
 			saveDBCafci(sql, &fondo)
 			flag = codCnv
 		}
 	}
-	internal.MoveOneFile("cafci.xlsx")
+	internal.MoveOneFile(dir, "cafci.xlsx")
 
 }
 
@@ -72,7 +73,7 @@ func saveDBCafci(db db.Mssql, fondo *db.Cafci) {
                 GETDATE()
             );`
 
-	err := db.DB.Exec(query, fondo.CodigoCafci, fondo.CodigoCnv, fondo.CodigoDeSocDep, fondo.CodigoDeSocGte, fondo.SociedadGerente)
+	err := db.DB.Exec(query, fondo.CodigoCafci, fondo.CodigoCnv, fondo.CodigoDeSocDep, fondo.CodigoDeSocGte, fondo.SociedadGerente).Error
 	if err != nil {
 		log.Printf(" error al guardar los datos de cafci %v", err)
 	}

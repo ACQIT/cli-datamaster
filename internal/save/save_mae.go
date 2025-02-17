@@ -4,20 +4,21 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/joskeinerG/cli-datamaster/internal"
+	"github.com/joskeinerG/cli-datamaster/internal/email"
 	"github.com/joskeinerG/cli-datamaster/pkg/db"
 	"github.com/shakinm/xlsReader/xls"
 	"golang.org/x/text/encoding/charmap"
 	"golang.org/x/text/transform"
 )
 
-func SaveMae(sql db.Mssql) {
-	nameFile := getNameMae()
-	path := fmt.Sprintf("C:\\Users\\joskeiner.simosa\\Desktop\\crm\\descargas\\%s", nameFile)
+func SaveMae(sql db.Mssql, dir, fileName, userId, toUser, tenantId, clienteId, clientScret string) {
+	path := filepath.Join(dir, fileName)
 	file, err := xls.OpenFile(path)
 	if err != nil {
 		log.Fatal("Error al abrir el archivo Excel:", err)
@@ -79,7 +80,7 @@ func SaveMae(sql db.Mssql) {
 			Descripcion:  convertToUTF8(descripcion.GetString()),
 			Direccion:    convertToUTF8(direccion.GetString()),
 			Telefono:     convertToUTF8(telefono.GetString()),
-			Email:        convertToUTF8(email.GetType()),
+			Email:        convertToUTF8(email.GetString()),
 			URLEntidad:   convertToUTF8(uRLEntidad.GetString()),
 			Categoria:    convertToUTF8(categoria.GetString()),
 			URLCNV:       convertToUTF8(uRLCNV.GetString()),
@@ -96,7 +97,8 @@ func SaveMae(sql db.Mssql) {
 		// 	log.Printf(" se ingresaron a la tabla N: %d", i)
 		// }
 	}
-	internal.MoveOneFile(nameFile)
+	internal.MoveOneFile(dir, fileName)
+	NotificateMea(sql, userId, toUser, tenantId, clienteId, clientScret)
 }
 
 func saveDBMae(sql db.Mssql, mae *db.Mae) {
@@ -158,4 +160,39 @@ func convertToUTF8(text string) string {
 	reader := transform.NewReader(strings.NewReader(text), charmap.Windows1252.NewDecoder())
 	result, _ := io.ReadAll(reader)
 	return string(result)
+}
+func parserMarketToTemplateMae(market db.Mae, data email.TempaleteData) email.TempaleteData {
+
+	data.NombreALYC = market.Descripcion
+	data.NombreCliente = " Javier "
+	data.NombreEmpresa = " Acqit "
+	data.URLDetalle = market.URLEntidad
+	data.Phone = market.Telefono
+	data.EmailALYC = market.Email
+	data.Market = "Mae"
+
+	return data
+}
+func NotificateMea(sql db.Mssql, userId, toUser, tenantId, clienteId, clientScret string) {
+	var (
+		mae      []db.Mae
+		htmlBody email.TempaleteData
+	)
+
+	if err := sql.DB.Table("mae").Where("created_at >= DATEADD(day, DATEDIFF(day, 0, GETDATE()), 0) AND created_at < DATEADD(day, DATEDIFF(day, 0, GETDATE()) + 1, 0)").Find(&mae).Error; err != nil {
+		log.Printf("Error al obtener datos de la tabla byma: %v", err)
+		return
+	}
+
+	if len(mae) > 0 {
+		for _, market := range mae {
+			htmlBody = parserMarketToTemplateMae(market, htmlBody)
+
+			email.SendEmail(htmlBody, userId, toUser, tenantId, clienteId, clientScret)
+		}
+
+	} else {
+		log.Println("No hay nuevos registros")
+	}
+
 }

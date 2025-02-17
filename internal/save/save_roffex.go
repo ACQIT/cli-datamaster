@@ -3,16 +3,20 @@ package save
 import (
 	"fmt"
 	"log"
+	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/joskeinerG/cli-datamaster/internal"
+	"github.com/joskeinerG/cli-datamaster/internal/email"
 	"github.com/joskeinerG/cli-datamaster/pkg/db"
 	"github.com/xuri/excelize/v2"
 )
 
-func SaveRofex(sql db.Mssql) {
-	file, err := excelize.OpenFile("C:\\Users\\joskeiner.simosa\\Desktop\\crm\\descargas\\agentes.xlsx")
+func SaveRofex(sql db.Mssql, dir, fileName, userId, toUser, tenantId, clienteId, clientScret string) {
+
+	path := filepath.Join(dir, fileName)
+	file, err := excelize.OpenFile(path)
 	if err != nil {
 		log.Fatal("Error al abrir el archivo Excel:", err)
 	}
@@ -21,7 +25,7 @@ func SaveRofex(sql db.Mssql) {
 	// Obtener el número total de filas
 	rows, _ := file.GetRows("Listado de Agentes")
 	totalRows := len(rows)
-	totalRows = totalRows - 2
+	totalRows = totalRows - 3
 
 	// Procesar cada fila (excepto la primera que es el encabezado)
 	for i := 2; i < totalRows; i++ {
@@ -48,7 +52,8 @@ func SaveRofex(sql db.Mssql) {
 		}
 		saveDBRoffex(sql, &agente)
 	}
-	internal.MoveOneFile("agentes.xlsx")
+	internal.MoveOneFile(dir, "agentes.xlsx")
+	NotificateRoffex(sql, userId, toUser, tenantId, clienteId, clientScret)
 }
 
 // Función auxiliar para obtener el valor de una celda de manera segura
@@ -112,11 +117,49 @@ WHEN NOT MATCHED THEN
            source.telefono, source.web, source.correo_electronico,
            GETDATE());`
 
-	err := sql.DB.Exec(query, roffex.RazonSocial, roffex.NumeroRegistroCNV, roffex.NumeroParticipanteMtR, roffex.CategoriaCNV, roffex.FechaAlta, roffex.Circular, roffex.Direccion, roffex.Telefono, roffex.Web, roffex.CorreoElectronico)
+	err := sql.DB.Exec(query, roffex.RazonSocial, roffex.NumeroRegistroCNV, roffex.NumeroParticipanteMtR, roffex.CategoriaCNV, roffex.FechaAlta, roffex.Circular, roffex.Direccion, roffex.Telefono, roffex.Web, roffex.CorreoElectronico).Error
 	if err != nil {
 		log.Printf("hubo un error a guardar los datos roffex %v", err)
 	}
 	if err == nil {
 		log.Println("se cargo o actualizo todo con exito roffex")
 	}
+}
+func parserMarketToTemplateRoffex(market db.Roffex, data email.TempaleteData) email.TempaleteData {
+
+	data.NombreALYC = market.RazonSocial
+	data.NombreCliente = "Javier "
+	data.NombreEmpresa = " Acqit "
+	data.URLDetalle = market.Web
+	data.Phone = market.Telefono
+	data.EmailALYC = market.CorreoElectronico
+	data.Market = "Roffex"
+
+	return data
+}
+func NotificateRoffex(sql db.Mssql, userId, toUser, tenantId, clienteId, clientScret string) {
+	var (
+		roffex   []db.Roffex
+		htmlBody email.TempaleteData
+	)
+
+	if err := sql.DB.Table("roffex").Where("created_at >= GETDATE()").Find(&roffex).Error; err != nil {
+		log.Printf("Error al obtener datos de la tabla byma: %v", err)
+		return
+	}
+	if err := sql.DB.Table("roffex").Where("created_at >= DATEADD(day, DATEDIFF(day, 0, GETDATE()), 0) AND created_at < DATEADD(day, DATEDIFF(day, 0, GETDATE()) + 1, 0)").Find(&roffex).Error; err != nil {
+		log.Printf("Error al obtener datos de la tabla byma: %v", err)
+		return
+	}
+	if len(roffex) > 0 {
+		for _, market := range roffex {
+
+			htmlBody = parserMarketToTemplateRoffex(market, htmlBody)
+			email.SendEmail(htmlBody, userId, toUser, tenantId, clienteId, clientScret)
+		}
+
+	} else {
+		log.Println("No hay nuevos registros")
+	}
+
 }
