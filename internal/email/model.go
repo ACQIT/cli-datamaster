@@ -65,14 +65,30 @@ const emailTemplate = `<!DOCTYPE html>
             text-align: center;
             font-size: 12px;
         }
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #0078D4;
+        .email-button {
+            font-family: inherit;
+            font-size: 20px;
+            background: royalblue;
             color: white;
+            padding: 0.7em 1em;
+            padding-left: 0.9em;
+            display: inline-flex;
+            align-items: center;
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
             text-decoration: none;
-            border-radius: 4px;
             margin: 20px 0;
+        }
+        .svg-wrapper-1 {
+            display: flex;
+            align-items: center;
+            margin-right: 0.3em;
+        }
+        .email-button svg {
+            display: block;
+            width: 24px;
+            height: 24px;
         }
         .details {
             background-color: #f9f9f9;
@@ -90,16 +106,31 @@ const emailTemplate = `<!DOCTYPE html>
         <div class="content">
             <p>Estimado/a {{.NombreCliente}},</p>
             
-            <p>Nos complace informarle que hay una nueva ALYC disponible en nuestro sistema.</p>
+            <p>Nos complace informarle que hay una nueva ALYC disponible .</p>
             
             <div class="details">
-                <h3>Detalles de la ALYC:</h3>
+                <h3>Detalles de la ALYC</h3>
+                <p><strong>Mercado :</strong> {{.Market}}</p>
                 <p><strong>Nombre:</strong> {{.NombreALYC}}</p>
+                <p><strong>Telefono:</strong> {{.Phone}}</p>
+                <p><strong>Email:</strong> {{.EmailALYC}}</p>
             </div>
-
             <p>Para ver más detalles y acceder a la información completa, haga clic en el siguiente botón:</p>
             
-            <a href="{{.URLDetalle}}" class="button">Ver Detalles</a>
+            <a href="{{.URLDetalle}}" class="email-button">
+                <div class="svg-wrapper-1">
+                    <div class="svg-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                            <path fill="none" d="M0 0h24v24H0z"></path>
+                            <path
+                                fill="currentColor"
+                                d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                            ></path>
+                        </svg>
+                    </div>
+                </div>
+                <span>Ver Detalles</span>
+            </a>
             
             <p>Si tiene alguna pregunta o necesita asistencia adicional, no dude en contactarnos.</p>
             
@@ -115,8 +146,11 @@ const emailTemplate = `<!DOCTYPE html>
 </html>`
 
 type TempaleteData struct {
+	Market        string
 	NombreCliente string
 	NombreALYC    string
 	URLDetalle    string
 	NombreEmpresa string
+	EmailALYC     string
+	Phone         string
 }
