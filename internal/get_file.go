@@ -8,6 +8,31 @@ import (
 	"time"
 )
 
+// CreateFolders crea una estructura de directorios que consiste en una carpeta principal
+// y dos subcarpetas: una para archivos procesados y otra para logs.
+//
+// Parámetros:
+//   - mainRouteName: Nombre de la carpeta principal
+//   - filesProcessedName: Nombre de la subcarpeta para archivos procesados
+//   - filesLogsName: Nombre de la subcarpeta para logs
+//
+// Returns:
+//   - bool: true si todas las carpetas se crearon correctamente o ya existen,
+//     false si ocurrió algún error durante el proceso
+//
+// La función realiza las siguientes operaciones:
+//  1. Verifica si la carpeta principal existe
+//  2. Si no existe:
+//     - Crea la carpeta principal con permisos 0755
+//     - Crea la subcarpeta para archivos procesados
+//     - Crea la subcarpeta para logs
+//  3. Si la carpeta principal existe:
+//     - Verifica y crea la subcarpeta de archivos procesados si no existe
+//     - Verifica y crea la subcarpeta de logs si no existe
+//
+// La función registra mensajes informativos y de error usando el paquete log.
+// Todos los directorios se crean con permisos 0755 (lectura y ejecución para todos,
+// escritura solo para el propietario).
 func CreateFolders(mainRouteName, filesProcessedName, filesLogsName string) bool {
 
 	exist, err := os.Stat(mainRouteName)
@@ -18,7 +43,7 @@ func CreateFolders(mainRouteName, filesProcessedName, filesLogsName string) bool
 		err := os.Mkdir(mainRouteName, 0755)
 		if err != nil {
 			log.Printf("error : %v", err.Error())
-			log.Panicf("Error al crear la carpeta %s", mainRouteName)
+			log.Printf("Error al crear la carpeta %s", mainRouteName)
 			return false
 		}
 
@@ -27,7 +52,7 @@ func CreateFolders(mainRouteName, filesProcessedName, filesLogsName string) bool
 		path := fmt.Sprintf("%s/%s", mainRouteName, filesProcessedName)
 		err = os.Mkdir(path, 0755)
 		if err != nil {
-			log.Panicf("Error al crear la carpeta %s", mainRouteName)
+			log.Printf("Error al crear la carpeta %s", mainRouteName)
 			return false
 		}
 
@@ -52,7 +77,7 @@ func CreateFolders(mainRouteName, filesProcessedName, filesLogsName string) bool
 			log.Println("Creando carpeta de archivos procesados")
 			err = os.Mkdir(pathProcessed, 0755)
 			if err != nil {
-				log.Panicf("Error al crear la carpeta %s", mainRouteName)
+				log.Printf("Error al crear la carpeta %s", mainRouteName)
 				return false
 			}
 		}
@@ -63,7 +88,7 @@ func CreateFolders(mainRouteName, filesProcessedName, filesLogsName string) bool
 			log.Println("Creando carpeta para los logs")
 			err = os.Mkdir(pathLogs, 0755)
 			if err != nil {
-				log.Panicf("Error al crear la carpeta %s", mainRouteName)
+				log.Printf("Error al crear la carpeta %s", mainRouteName)
 				return false
 			}
 		}
@@ -73,7 +98,7 @@ func CreateFolders(mainRouteName, filesProcessedName, filesLogsName string) bool
 
 	err = os.Mkdir(mainRouteName, 0755)
 	if err != nil {
-		log.Panicf("Error al crear la carpeta %s", mainRouteName)
+		log.Printf("Error al crear la carpeta %s", mainRouteName)
 		return false
 	}
 
@@ -82,7 +107,7 @@ func CreateFolders(mainRouteName, filesProcessedName, filesLogsName string) bool
 	path := fmt.Sprintf("%s/%s", mainRouteName, filesProcessedName)
 	err = os.Mkdir(path, 0755)
 	if err != nil {
-		log.Panicf("Error al crear la carpeta %s", mainRouteName)
+		log.Printf("Error al crear la carpeta %s", mainRouteName)
 		return false
 	}
 
@@ -91,7 +116,7 @@ func CreateFolders(mainRouteName, filesProcessedName, filesLogsName string) bool
 	path = fmt.Sprintf("%s/%s", mainRouteName, filesLogsName)
 	err = os.Mkdir(path, 0755)
 	if err != nil {
-		log.Panicf("Error al crear la carpeta %s", mainRouteName)
+		log.Printf("Error al crear la carpeta %s", mainRouteName)
 		return false
 	}
 
@@ -113,7 +138,7 @@ func FindFiles(NameFileMav, NameFileRofex, NameFileMae, NameFileByma, dir, newAd
 	log.Printf("Nombres a buscar: %s, %s, %s", NameFileMav, NameFileRofex, NameFileMae)
 	files, err := os.ReadDir(dir)
 	if err != nil {
-		log.Panicf("Error al leer la carpeta %s", dir)
+		log.Printf("Error al leer la carpeta %s", dir)
 	}
 	for _, file := range files {
 		if file.Name() == NameFileRofex {
@@ -165,7 +190,7 @@ func MoveOneFile(dir, nameFile string) {
 	files, err := os.ReadDir(dir)
 	route := fmt.Sprintf("%s\\procesados", dir)
 	if err != nil {
-		log.Panicf("Error al leer la carpeta C:\\Users\\joskeiner.simosa\\Desktop\\crm\\descargas")
+		log.Printf("Error al leer la carpeta : %v", dir)
 	}
 	for _, file := range files {
 		if file.Name() == nameFile {

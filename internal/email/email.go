@@ -11,6 +11,23 @@ import (
 	"net/url"
 )
 
+// getToken obtiene un token de acceso OAuth 2.0 de Microsoft Graph API.
+//
+// Parámetros:
+//   - tenantId string: ID del inquilino (tenant) de Azure AD
+//   - clienteId string: ID del cliente (aplicación)
+//   - clientScret string: Secreto del cliente
+//
+// Returns:
+//   - string: Token de acceso si la solicitud es exitosa, cadena vacía en caso de error
+//
+// La función realiza una solicitud POST al endpoint OAuth de Microsoft para obtener
+// un token usando el flujo de credenciales de cliente. Utiliza el token para acceder
+// a Microsoft Graph API.
+//
+// Si la solicitud es exitosa (código 200), deserializa la respuesta JSON y devuelve
+// el token de acceso. En caso de error, registra el problema y devuelve una cadena
+// vacía o el valor por defecto de AccessToken.
 func getToken(tenantId, clienteId, clientScret string) string {
 
 	var token Response

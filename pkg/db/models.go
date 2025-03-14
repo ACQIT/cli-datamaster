@@ -6,6 +6,25 @@ import (
 	"gorm.io/gorm"
 )
 
+// Mav representa la estructura de un Mercado Abierto de Valores en la base de datos.
+//
+// La estructura contiene campos que siguen las convenciones de GORM para ORM,
+// incluyendo campos para seguimiento de fechas de creación/actualización y borrado lógico.
+//
+// Campos principales:
+//   - MatCNV: Número de matrícula en CNV, identificador único
+//   - OperadorMAV: Número de operador en el MAV
+//   - DeposCVSA: Código de depósito en Caja de Valores S.A.
+//   - Categoria: Categoría del agente MAV
+//   - TipoAgente: Tipo de agente
+//   - Denominacion: Nombre o denominación social
+//   - Condicion: Condición del agente
+//   - Domicilio: Dirección física
+//   - Localidad: Localidad/ciudad
+//   - Telefono: Número telefónico de contacto
+//
+// La estructura implementa el método TableName() para especificar
+// el nombre de la tabla en la base de datos.
 type Mav struct {
 	ID        uint           `gorm:"primaryKey;column:id;autoIncrement"`
 	CreatedAt time.Time      `gorm:"column:created_at"`
@@ -27,6 +46,26 @@ type Mav struct {
 func (Mav) TableName() string {
 	return "mav"
 }
+
+// Byma representa la estructura de un agente del Mercado de Bolsas y Mercados Argentinos (BYMA) en la base de datos.
+//
+// La estructura utiliza convenciones de GORM para ORM, incluyendo campos de auditoría
+// para seguimiento de creación, actualización y borrado lógico.
+//
+// Campos principales:
+//   - Titulo: Nombre o título del agente BYMA
+//   - Matricula: Número de matrícula, identificador único del agente
+//   - Participante: Código de participante en el mercado
+//   - Categoria: Categoría o tipo de agente
+//   - Direccion: Dirección física del agente
+//   - Phone: Número telefónico de contacto
+//   - Fax: Número de fax (si aplica)
+//   - Email: Dirección de correo electrónico de contacto
+//   - Web: Sitio web del agente
+//   - Leyenda: Información adicional o descripción
+//
+// La estructura implementa el método TableName() para definir
+// explícitamente el nombre de la tabla en la base de datos.
 
 type Byma struct {
 	ID        uint           `gorm:"primaryKey;column:id;autoIncrement"`
@@ -50,6 +89,25 @@ func (Byma) TableName() string {
 	return "byma"
 }
 
+// Mae representa la estructura de un agente del Mercado Abierto Electrónico (MAE) en la base de datos.
+//
+// La estructura implementa convenciones de GORM para ORM, incluyendo los campos estándar
+// para el seguimiento de creación, actualización y borrado lógico de registros.
+//
+// Campos principales:
+//   - Descripcion: Nombre o descripción del agente MAE
+//   - Direccion: Dirección física del agente
+//   - Telefono: Número telefónico de contacto
+//   - Email: Dirección de correo electrónico
+//   - URLEntidad: Sitio web oficial del agente
+//   - Categoria: Categoría o clasificación del agente
+//   - URLCNV: Enlace a la información del agente en el sitio de la CNV
+//   - NroRegistro: Número de registro del agente
+//   - MatriculaCNV: Número de matrícula asignado por la CNV
+//   - Tipo: Tipo o modalidad del agente
+//
+// La estructura implementa el método TableName() para especificar
+// explícitamente el nombre de la tabla en la base de datos.
 type Mae struct {
 	ID        uint           `gorm:"primaryKey;column:id;autoIncrement"`
 	CreatedAt time.Time      `gorm:"column:created_at"`
@@ -72,6 +130,25 @@ func (Mae) TableName() string {
 	return "mae"
 }
 
+// Roffex representa la estructura de un agente del Mercado ROFEX (Rosario Futures Exchange) en la base de datos.
+//
+// La estructura implementa las convenciones de GORM para ORM, incluyendo campos automáticos
+// para seguimiento de creación, actualización y borrado lógico de registros.
+//
+// Campos principales:
+//   - RazonSocial: Nombre o razón social del agente ROFEX
+//   - NumeroRegistroCNV: Número de registro en la Comisión Nacional de Valores
+//   - NumeroParticipanteMtR: Número de participante en el Mercado a Término de Rosario
+//   - CategoriaCNV: Categoría asignada por la CNV
+//   - FechaAlta: Fecha de inicio de operaciones en el mercado
+//   - Circular: Número de circular relacionada
+//   - Direccion: Dirección física del agente
+//   - Telefono: Número telefónico de contacto
+//   - Web: Sitio web del agente
+//   - CorreoElectronico: Dirección de correo electrónico de contacto
+//
+// La estructura implementa el método TableName() para definir
+// explícitamente el nombre de la tabla en la base de datos.
 type Roffex struct {
 	ID        uint           `gorm:"primaryKey;column:id;autoIncrement"`
 	CreatedAt time.Time      `gorm:"column:created_at"`
@@ -94,6 +171,20 @@ func (Roffex) TableName() string {
 	return "roffex"
 }
 
+// Cafci representa la estructura de un registro de la Cámara Argentina de Fondos Comunes de Inversión (CAFCI) en la base de datos.
+//
+// La estructura implementa las convenciones de GORM para ORM, incluyendo campos estándar
+// para el seguimiento de creación, actualización y borrado lógico de registros.
+//
+// Campos principales:
+//   - CodigoCnv: Código asignado por la Comisión Nacional de Valores
+//   - CodigoCafci: Código identificador dentro de la CAFCI
+//   - CodigoDeSocDep: Código de la sociedad depositaria
+//   - CodigoDeSocGte: Código de la sociedad gerente
+//   - SociedadGerente: Nombre de la sociedad gerente del fondo
+//
+// La estructura implementa el método TableName() para especificar
+// explícitamente el nombre de la tabla en la base de datos.
 type Cafci struct {
 	ID        uint           `gorm:"primaryKey;column:id;autoIncrement"`
 	CreatedAt time.Time      `gorm:"column:created_at"`

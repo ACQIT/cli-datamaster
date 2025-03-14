@@ -125,6 +125,17 @@ func (v *Viper) newDBConfig() (Database, error) {
 	return db, nil
 }
 
+// newFilesConfig crea y retorna una nueva configuración de archivos a partir de los valores
+// almacenados en Viper. La función deserializa la configuración actual de Viper
+// en una estructura Files.
+//
+// Returns:
+//   - Files: La configuración de archivos deserializada
+//   - error: Un error si la deserialización falla, nil en caso contrario
+//
+// La función utiliza Viper.Unmarshal internamente para mapear los valores de configuración
+// a los campos de la estructura Files. Si hay algún error durante este proceso,
+// retorna una estructura Files vacía junto con el error encontrado.
 func (v *Viper) newFilesConfig() (Files, error) {
 	var files Files
 
@@ -135,6 +146,17 @@ func (v *Viper) newFilesConfig() (Files, error) {
 	return files, nil
 }
 
+// newEmailConfig crea y retorna una nueva configuración de email a partir de los valores
+// almacenados en Viper. La función deserializa la configuración actual de Viper
+// en una estructura EmailConfig.
+//
+// Returns:
+//   - EmailConfig: La configuración de email deserializada
+//   - error: Un error si la deserialización falla, nil en caso contrario
+//
+// La función utiliza Viper.Unmarshal internamente para mapear los valores de configuración
+// a los campos de la estructura EmailConfig. Si hay algún error durante este proceso,
+// retorna una estructura EmailConfig vacía junto con el error encontrado.
 func (v *Viper) newEmailConfig() (EmailConfig, error) {
 	var emailConfig EmailConfig
 

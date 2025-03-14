@@ -74,6 +74,22 @@ func (m *Mssql) Close() error {
 	return db.Close()
 }
 
+// Migrate realiza la migración automática de las tablas en la base de datos MSSQL.
+// Verifica la existencia de las tablas para los modelos Roffex, Mae, Mav, Byma y Cafci.
+// Si alguna tabla no existe, la crea utilizando el esquema definido en su respectivo modelo.
+//
+// La función ejecuta las siguientes operaciones:
+//   - Verifica la existencia de cada tabla usando el Migrator de GORM
+//   - Si la tabla no existe, ejecuta AutoMigrate para crearla
+//   - Si ocurre algún error durante la migración, retorna inmediatamente
+//
+// Returns:
+//   - error: Retorna nil si todas las migraciones son exitosas,
+//     o el primer error encontrado durante el proceso de migración
+//
+// Este método es útil para la inicialización de la base de datos y
+// asegura que todas las tablas necesarias estén creadas antes de
+// que la aplicación comience a operar.
 func (m *Mssql) Migrate() error {
 
 	models := []interface{}{

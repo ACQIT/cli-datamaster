@@ -22,9 +22,9 @@ func SaveByma(sql db.Mssql, dir, fileName, userId, toUser, tenantId, clienteId, 
 	// Obtener el número total de filas
 	rows, _ := file.GetRows("alycs")
 	totalRows := len(rows)
-
+	log.Println(totalRows)
 	// Procesar cada fila (excepto la primera que es el encabezado)
-	for i := 2; i < totalRows; i++ {
+	for i := 2; i <= totalRows; i++ {
 		// Obtener cada valor usando coordenadas específicas
 
 		// Obtener valores de cada celda usando coordenadas específicas
